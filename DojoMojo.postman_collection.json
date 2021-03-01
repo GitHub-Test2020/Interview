@@ -1,0 +1,1087 @@
+{
+	"info": {
+		"_postman_id": "fb26c35b-2887-49df-9d7f-8ae2eb5377d2",
+		"name": "DojoMojo",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Books",
+			"item": [
+				{
+					"name": "Get all Books",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Validate the data received from The Rogue Prince\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const theRoguePrince = response.find(item => item.name === \"The Rogue Prince\");\r",
+									"\r",
+									"pm.test(\"Verify Data in The Rogue Prince\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    var expectedObject = {\r",
+									"    \"name\": \"The Rogue Prince\",\r",
+									"    \"isbn\": \"978-0345537263\",\r",
+									"    \"numberOfPages\": 832,\r",
+									"    \"publisher\": \"Bantam Books\",\r",
+									"    \"country\": \"United States\",\r",
+									"    \"mediaType\": \"Hardcover\",\r",
+									"    \"released\": \"2014-06-17T00:00:00\"   \r",
+									"    }\r",
+									"    pm.expect(theRoguePrince).to.include(expectedObject);\r",
+									"    pm.expect(theRoguePrince.authors).to.include(\"George R. R. Martin\");\r",
+									"    pm.expect(theRoguePrince.url).to.include(\"anapioficeandfire.com/api/books/10\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}books",
+							"host": [
+								"{{GOTURL}}books"
+							]
+						},
+						"description": "This Request gets all books then validates the data of one object"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a Book by ID Filter",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//This test validates the schema\r",
+									"\r",
+									"const schema = {\r",
+									"      \"type\": \"object\",\r",
+									"      \"properties\": {\r",
+									"        \"url\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"name\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"isbn\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"authors\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": [\r",
+									"            {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          ]\r",
+									"        },\r",
+									"        \"numberOfPages\": {\r",
+									"          \"type\": \"integer\"\r",
+									"        },\r",
+									"        \"publisher\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"country\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"mediaType\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"released\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"characters\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": [\r",
+									"            {\r",
+									"              \"type\": \"string\"\r",
+									"            },\r",
+									"            {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          ]\r",
+									"        },\r",
+									"        \"povCharacters\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": {}\r",
+									"        }\r",
+									"      },\r",
+									"      \"required\": [\r",
+									"        \"url\",\r",
+									"        \"name\",\r",
+									"        \"isbn\",\r",
+									"        \"authors\",\r",
+									"        \"numberOfPages\",\r",
+									"        \"publisher\",\r",
+									"        \"country\",\r",
+									"        \"mediaType\",\r",
+									"        \"released\",\r",
+									"        \"characters\",\r",
+									"        \"povCharacters\"\r",
+									"      ]\r",
+									"};\r",
+									"     \r",
+									"pm.test(\"Validate Schema\", function(){\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}books/10",
+							"host": [
+								"{{GOTURL}}books"
+							],
+							"path": [
+								"10"
+							]
+						},
+						"description": "The request gets a request using ID then the Schema is validated"
+					},
+					"response": []
+				},
+				{
+					"name": "Get a Book with Query Params",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//This test validates the amount of items displayed on the page\r",
+									"\r",
+									"const responses = pm.response.json();\r",
+									"const numberOfArrays = responses.length;\r",
+									"\r",
+									"console.log(numberOfArrays);\r",
+									"\r",
+									"pm.test(\"Verify number of Items per page\", function(){\r",
+									"    pm.expect(numberOfArrays).to.eql(7);\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}books?page=1&pageSize=7",
+							"host": [
+								"{{GOTURL}}books"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "7"
+								}
+							]
+						},
+						"description": "The request gets a request using query parameters (page number and number of items per page) then validate the number of items displayed on the page."
+					},
+					"response": []
+				},
+				{
+					"name": "Get a Book by Name",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Validate the format of the data returned\r",
+									"const response = pm.response.json();\r",
+									"const aGameOfThrones = response.find(item => item.name === \"A Game of Thrones\");\r",
+									"\r",
+									"pm.test(\"Response body is in the correct format\", function() {\r",
+									"    pm.expect(aGameOfThrones.url).to.be.a('string');\r",
+									"    pm.expect(aGameOfThrones.name).to.be.a('string');\r",
+									"    pm.expect(aGameOfThrones.isbn).to.be.a('string');\r",
+									"    pm.expect(aGameOfThrones.authors).to.be.a('array');\r",
+									"    pm.expect(aGameOfThrones.characters).to.be.a('array');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}books?name=A Game of Thrones",
+							"host": [
+								"{{GOTURL}}books"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "A Game of Thrones"
+								}
+							]
+						},
+						"description": "This Test Gets a book by name then Validate the format of the data returned"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Books by Released Date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Validate the format of the date and validate each date returned is after the year 2000\r",
+									"\r",
+									"const response = pm.response.json();\r",
+									"const numberOfArrays = response.length;\r",
+									"\r",
+									"pm.test(\"Date is in correct format\", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"    pm.expect(response[i].released).to.match(/^2[0-9]{3}-[0-9]{2}-[a-zA-Z0-9]{5}:[0-9]{2}:[0-9]{2}$/);\r",
+									"   };\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}books?fromReleaseDate=2000-01-01T00:00:00",
+							"host": [
+								"{{GOTURL}}books"
+							],
+							"query": [
+								{
+									"key": "fromReleaseDate",
+									"value": "2000-01-01T00:00:00"
+								}
+							]
+						},
+						"description": "Gets book by released date then Validate the format of the date and validate each date returned is after the year 2000"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Book Released before certain Date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const numberOfArrays = response.length;\r",
+									"\r",
+									"pm.test(\"Date is in correct format\", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"    pm.expect(response[i].released).to.match(/^1[A-Za-z0-9]{3}.{15}$/);\r",
+									"   };\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}books?toReleaseDate=2000-01-01T00:00:00",
+							"host": [
+								"{{GOTURL}}books"
+							],
+							"query": [
+								{
+									"key": "toReleaseDate",
+									"value": "2000-01-01T00:00:00"
+								}
+							]
+						},
+						"description": "Gets all books released before the year 2000 then validates it"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Characters",
+			"item": [
+				{
+					"name": "Get max amount of Characters on first page",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Get max amount of characters on first page then display actual amount and\r",
+									"//Verify that the amount is less than \"pagesize\" but more than 40\r",
+									"//Also verify that status code and Response time\r",
+									"\r",
+									"const responses = pm.response.json();\r",
+									"const numberOfArrays = responses.length;\r",
+									"console.log(numberOfArrays);\r",
+									"\r",
+									"pm.test(\"Verify number of Items per page\", function(){\r",
+									"    pm.expect(numberOfArrays).to.lessThan(51).to.greaterThan(40);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response time is less than 300ms\", function () {\r",
+									"    pm.expect(pm.response.responseTime).to.be.below(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Response is OK\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}characters?page=1&pageSize=51",
+							"host": [
+								"{{GOTURL}}characters"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "51"
+								}
+							]
+						},
+						"description": "Get max amount of characters on first page then display actual amount and Verify that the amount is less than \"pagesize\" but more than 40. Also verify the status code and Response time"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Character by Name",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const schema = {\r",
+									"  \"type\": \"array\",\r",
+									"  \"items\": [\r",
+									"    {\r",
+									"      \"type\": \"object\",\r",
+									"      \"properties\": {\r",
+									"        \"url\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"name\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"gender\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"culture\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"born\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"died\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"titles\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": [\r",
+									"            {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          ]\r",
+									"        },\r",
+									"        \"aliases\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": [\r",
+									"            {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          ]\r",
+									"        },\r",
+									"        \"father\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"mother\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"spouse\": {\r",
+									"          \"type\": \"string\"\r",
+									"        },\r",
+									"        \"allegiances\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": [\r",
+									"            {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          ]\r",
+									"        },\r",
+									"        \"books\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": [\r",
+									"            {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          ]\r",
+									"        },\r",
+									"        \"povBooks\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": {}\r",
+									"        },\r",
+									"        \"tvSeries\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": [\r",
+									"            {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          ]\r",
+									"        },\r",
+									"        \"playedBy\": {\r",
+									"          \"type\": \"array\",\r",
+									"          \"items\": [\r",
+									"            {\r",
+									"              \"type\": \"string\"\r",
+									"            }\r",
+									"          ]\r",
+									"        }\r",
+									"      },   \r",
+									"    }\r",
+									"  ]\r",
+									"}\r",
+									"\r",
+									"pm.test(\"Validate Schema\", function(){\r",
+									"    pm.response.to.have.jsonSchema(schema);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}characters?name=Walder",
+							"host": [
+								"{{GOTURL}}characters"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "Walder"
+								}
+							]
+						},
+						"description": "Get Character by name then validate the schema"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Character by Culture and By Pagination",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responses = pm.response.json();\r",
+									"const numberOfArrays = responses.length;\r",
+									"console.log(numberOfArrays);\r",
+									"\r",
+									"pm.test(\"Verify all Culture equals Braavosi\", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"    pm.expect(responses[i].culture).to.eql(\"Braavosi\");\r",
+									"   };\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Verify number of Items per page\", function(){\r",
+									"    pm.expect(numberOfArrays).to.lessThan(51).to.greaterThan(40);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}characters?culture=Braavosi&page=1&pageSize=51",
+							"host": [
+								"{{GOTURL}}characters"
+							],
+							"query": [
+								{
+									"key": "culture",
+									"value": "Braavosi"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "51"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Character by Culture and Gender",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responses = pm.response.json();\r",
+									"const numberOfArrays = responses.length;\r",
+									"console.log(numberOfArrays);\r",
+									"\r",
+									"pm.test(\"Verify all Gender equals Female and Culture is Braavosi \", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"    pm.expect(responses[i].gender).to.eql(\"Female\");\r",
+									"    pm.expect(responses[i].culture).to.eql(\"Braavosi\");\r",
+									"   };\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}characters?culture=Braavosi&gender=Female",
+							"host": [
+								"{{GOTURL}}characters"
+							],
+							"query": [
+								{
+									"key": "culture",
+									"value": "Braavosi"
+								},
+								{
+									"key": "gender",
+									"value": "Female"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Characters that Died on third page using Pagination",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const numberOfArrays = response.length;\r",
+									"\r",
+									"pm.test(\"Verify 'died' field contains data\", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"    console.log(response[i].died);\r",
+									"    pm.expect(response[i].died).to.match(/[a-z0-9]$/);\r",
+									"   };\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}characters?isAlive=false&page=2&pageSize=5",
+							"host": [
+								"{{GOTURL}}characters"
+							],
+							"query": [
+								{
+									"key": "isAlive",
+									"value": "false"
+								},
+								{
+									"key": "page",
+									"value": "2"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Character with Birth Date",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"const numberOfArrays = response.length;\r",
+									"\r",
+									"pm.test(\"Verify birth\", function(){\r",
+									"    for(var i =0; i<numberOfArrays; i++){\r",
+									"    console.log(response[i].born);\r",
+									"    pm.expect(response[i].born).to.eql(\"In 184 AC\");\r",
+									"    }\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}characters?born=In 184 AC",
+							"host": [
+								"{{GOTURL}}characters"
+							],
+							"query": [
+								{
+									"key": "born",
+									"value": "In 184 AC"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get a Specific Character",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const response = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Verify Data for Specific Character\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    console.log(jsonData);\r",
+									"    var expectedObject = {\r",
+									"    \"name\": \"Petyr Baelish\",\r",
+									"    \"gender\": \"Male\",\r",
+									"    \"culture\": \"Valemen\",\r",
+									"    \"born\": \"In 268 AC, at the Fingers\",\r",
+									"    \"died\": \"\",\r",
+									"    \"father\": \"\",\r",
+									"    \"mother\": \"\",\r",
+									"    \"spouse\": \"https://www.anapioficeandfire.com/api/characters/688\",\r",
+									"    }\r",
+									"    pm.expect(jsonData).to.include(expectedObject);\r",
+									"    pm.expect(jsonData.aliases).to.include(\"Littlefinger\");\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}characters/823",
+							"host": [
+								"{{GOTURL}}characters"
+							],
+							"path": [
+								"823"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Houses",
+			"item": [
+				{
+					"name": "Get All Houses",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"//Validate the format of the data returned\r",
+									"const response = pm.response.json();\r",
+									"const houseAmbrose = response.find(item => item.name === \"House Ambrose\");\r",
+									"\r",
+									"pm.test(\"Response body is in the correct format\", function() {\r",
+									"    pm.expect(houseAmbrose.url).to.be.a('string');\r",
+									"    pm.expect(houseAmbrose.name).to.be.a('string');\r",
+									"    pm.expect(houseAmbrose.coatOfArms).to.be.a('string');\r",
+									"    pm.expect(houseAmbrose.words).to.be.a('string');\r",
+									"    pm.expect(houseAmbrose.titles).to.be.a('array');\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}houses",
+							"host": [
+								"{{GOTURL}}houses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Houses by Pagination",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responses = pm.response.json();\r",
+									"const numberOfArrays = responses.length;\r",
+									"console.log(numberOfArrays);\r",
+									"\r",
+									"pm.test(\"Search for House Crabb on Second Page\", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"    if(responses[i].name == \"House Crabb\"){\r",
+									"        console.log(responses[i].name);\r",
+									"        pm.expect(responses[i].name).to.eql(\"House Crabb\");\r",
+									"    }\r",
+									"   };\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}houses?page=2&pageSize=50",
+							"host": [
+								"{{GOTURL}}houses"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "2"
+								},
+								{
+									"key": "pageSize",
+									"value": "50"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get House by Name and Validate Header",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Content-Type is present\", function () {\r",
+									"    pm.response.to.have.header(\"Content-Type\", \"application/json; charset=utf-8\");\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Content-Type is JSON\", function () {\r",
+									"    pm.response.to.be.json;\r",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}houses?name=House Dondarrion of Blackhaven",
+							"host": [
+								"{{GOTURL}}houses"
+							],
+							"query": [
+								{
+									"key": "name",
+									"value": "House Dondarrion of Blackhaven"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Houses by Region",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responses = pm.response.json();\r",
+									"const numberOfArrays = responses.length;\r",
+									"console.log(numberOfArrays);\r",
+									"\r",
+									"pm.test(\"Verify all Houses contains a region of The Stormlands\", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"       console.log(responses[i].region);\r",
+									"    pm.expect(responses[i].region).to.eql(\"The Stormlands\");\r",
+									"   };\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}houses?region=The Stormlands&page=2",
+							"host": [
+								"{{GOTURL}}houses"
+							],
+							"query": [
+								{
+									"key": "region",
+									"value": "The Stormlands"
+								},
+								{
+									"key": "page",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Houses that has Words",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responses = pm.response.json();\r",
+									"const numberOfArrays = responses.length;\r",
+									"console.log(numberOfArrays);\r",
+									"\r",
+									"pm.test(\"Verify that 'Words' must contain data\", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"       console.log(responses[i].region);\r",
+									"    pm.expect(responses[i].words).to.not.eql(\" \");\r",
+									"   };\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}houses?hasWords=true",
+							"host": [
+								"{{GOTURL}}houses"
+							],
+							"query": [
+								{
+									"key": "hasWords",
+									"value": "true"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Houses that has Words, Title and Seats",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responses = pm.response.json();\r",
+									"const numberOfArrays = responses.length;\r",
+									"\r",
+									"pm.test(\"Verify that 'Words', Titles and Seats must contain data\", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"    pm.expect(responses[i].words).to.not.eql(\"\");\r",
+									"    pm.expect(responses[i].titles).to.not.include(\" \");\r",
+									"    pm.expect(responses[i].seats).to.not.include(\"\");\r",
+									"   };\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}houses?hasWords=true&hasTitles=true&hasSeats=true&page=1&pageSize=50",
+							"host": [
+								"{{GOTURL}}houses"
+							],
+							"query": [
+								{
+									"key": "hasWords",
+									"value": "true"
+								},
+								{
+									"key": "hasTitles",
+									"value": "true"
+								},
+								{
+									"key": "hasSeats",
+									"value": "true"
+								},
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "pageSize",
+									"value": "50"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Houses that has NOT Died out and has Ancestral Weapons",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const responses = pm.response.json();\r",
+									"const numberOfArrays = responses.length;\r",
+									"\r",
+									"pm.test(\"Verify that the house has not died out and they Must have Ascestral weapon\", function(){\r",
+									"   for(var i = 0; i<numberOfArrays; i++){\r",
+									"    pm.expect(responses[i].diedOut).to.eql(\"\");\r",
+									"    pm.expect(responses[i].ancestralWeapons).to.not.eql(\"\");\r",
+									"   };\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{GOTURL}}houses?hasDiedOut=false&hasAncestralWeapons=true&pageSize=5",
+							"host": [
+								"{{GOTURL}}houses"
+							],
+							"query": [
+								{
+									"key": "hasDiedOut",
+									"value": "false"
+								},
+								{
+									"key": "hasAncestralWeapons",
+									"value": "true"
+								},
+								{
+									"key": "pageSize",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "GOTURL",
+			"value": "https://www.anapioficeandfire.com/api/"
+		}
+	]
+}
